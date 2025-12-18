@@ -1,0 +1,76 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Jobseeker Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Welcome, {{ user.username }}!</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">Your Applications</h5>
+                </div>
+                <div class="card-body">
+                    {% if applications %}
+                        <div class="list-group list-group-flush">
+                            {% for application in applications %}
+                                <div class="list-group-item">
+                                    <h6 class="mb-1"><a href="{% url 'portal:job_details' application.job.id %}">{{ application.job.title }}</a></h6>
+                                    <p class="mb-1">{{ application.job.recruiter.username }}</p>
+                                    <small class="text-muted">Applied on {{ application.applied_at|date:"M d, Y" }}</small>
+                                    <span class="badge bg-{% if application.status == 'pending' %}warning{% elif application.status == 'accepted' %}success{% else %}danger{% endif %} ms-2">{{ application.status|title }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">You haven't applied to any jobs yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Recommended Jobs</h5>
+                </div>
+                <div class="card-body">
+                    {% if matched_jobs %}
+                        <div class="list-group list-group-flush">
+                            {% for job in matched_jobs %}
+                                <div class="list-group-item">
+                                    <h6 class="mb-1"><a href="{% url 'portal:job_details' job.id %}">{{ job.title }}</a></h6>
+                                    <p class="mb-1">{{ job.recruiter.username }}</p>
+                                    <small class="text-muted">{{ job.category|title }}</small>
+                                    <a href="{% url 'portal:apply_job' job.id %}" class="btn btn-sm btn-primary mt-2">Apply Now</a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No recommended jobs available. Update your skills in your profile.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">All Available Jobs</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'portal:job_list' %}" class="btn btn-primary">Browse All Jobs</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

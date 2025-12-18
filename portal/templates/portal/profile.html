@@ -1,0 +1,54 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Complete Your Profile</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="display_name" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="display_name" name="display_name" value="{{ form.display_name.value|default:'' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="user_type" class="form-label">User Type</label>
+                            <select class="form-control" id="user_type" name="user_type" required>
+                                <option value="">Select User Type</option>
+                                <option value="recruiter" {% if form.user_type.value == 'recruiter' %}selected{% endif %}>Recruiter</option>
+                                <option value="jobseeker" {% if form.user_type.value == 'jobseeker' %}selected{% endif %}>Jobseeker</option>
+                            </select>
+                        </div>
+                        {% if form.user_type.value == 'recruiter' %}
+                            <div class="mb-3">
+                                <label for="company_name" class="form-label">Company Name</label>
+                                <input type="text" class="form-control" id="company_name" name="company_name" value="{{ form.company_name.value|default:'' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="company_description" class="form-label">Company Description</label>
+                                <textarea class="form-control" id="company_description" name="company_description" rows="4">{{ form.company_description.value|default:'' }}</textarea>
+                            </div>
+                        {% else %}
+                            <div class="mb-3">
+                                <label for="skills" class="form-label">Skills (comma-separated)</label>
+                                <input type="text" class="form-control" id="skills" name="skills" value="{{ form.skills.value|default:'' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="resume" class="form-label">Resume</label>
+                                <input type="file" class="form-control" id="resume" name="resume">
+                            </div>
+                        {% endif %}
+                        <button type="submit" class="btn btn-primary">Save Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

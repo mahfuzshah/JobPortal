@@ -1,0 +1,48 @@
+{% extends 'portal/base.html' %}
+
+{% block title %}Manage Applications for {{ job.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Applications for: {{ job.title }}</h2>
+    <p>Posted by: {{ job.recruiter.username }}</p>
+
+    {% if applications %}
+        <div class="row">
+            {% for application in applications %}
+                <div class="col-md-6 mb-4">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ application.jobseeker.username }}</h5>
+                            <p class="card-text"><strong>Skills:</strong> {{ application.skills }}</p>
+                            <p class="card-text"><strong>Cover Letter:</strong> {{ application.cover_letter|truncatechars:100 }}</p>
+                            <p class="card-text"><strong>Status:</strong> <span class="badge bg-{% if application.status == 'pending' %}warning{% elif application.status == 'shortlisted' %}info{% elif application.status == 'selected' %}success{% else %}danger{% endif %}">{{ application.status|title }}</span></p>
+                            <p class="card-text"><small class="text-muted">Applied on: {{ application.applied_at|date:"M d, Y" }}</small></p>
+                            {% if application.resume %}
+                                <a href="{{ application.resume.url }}" class="btn btn-sm btn-outline-primary" target="_blank">View Resume</a>
+                            {% endif %}
+                            <form method="post" class="d-inline">
+                                {% csrf_token %}
+                                <input type="hidden" name="application_id" value="{{ application.id }}">
+                                <select name="status" class="form-select form-select-sm d-inline w-auto">
+                                    <option value="pending" {% if application.status == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="shortlisted" {% if application.status == 'shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                    <option value="selected" {% if application.status == 'selected' %}selected{% endif %}>Selected</option>
+                                    <option value="rejected" {% if application.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No applications yet.</p>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'portal:dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

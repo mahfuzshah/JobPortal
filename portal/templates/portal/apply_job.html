@@ -1,0 +1,59 @@
+{% extends 'portal/base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">Apply for: {{ job.title }}</h3>
+                    <small class="text-muted">Posted by: {{ job.recruiter.username }}</small>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h5>Job Details:</h5>
+                        <p><strong>Category:</strong> {{ job.get_category_display }}</p>
+                        <p><strong>Openings:</strong> {{ job.number_of_openings }}</p>
+                        <p><strong>Description:</strong> {{ job.description }}</p>
+                        <p><strong>Required Skills:</strong> {{ job.skills_required }}</p>
+                    </div>
+
+                    <h5>Your Application:</h5>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="skills" class="form-label">Your Skills</label>
+                            <textarea class="form-control" id="skills" name="skills" rows="3" placeholder="Enter your skills (comma-separated)" required>{{ form.skills.value|default:'' }}</textarea>
+                            {% if form.skills.errors %}
+                                <div class="text-danger">{{ form.skills.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="resume" class="form-label">Resume</label>
+                            <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx">
+                            {% if form.resume.errors %}
+                                <div class="text-danger">{{ form.resume.errors }}</div>
+                            {% endif %}
+                            <div class="form-text">Upload your resume (PDF, DOC, DOCX)</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="cover_letter" class="form-label">Cover Letter</label>
+                            <textarea class="form-control" id="cover_letter" name="cover_letter" rows="5" placeholder="Write your cover letter here...">{{ form.cover_letter.value|default:'' }}</textarea>
+                            {% if form.cover_letter.errors %}
+                                <div class="text-danger">{{ form.cover_letter.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Submit Application</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'portal:job_list' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
