@@ -18,6 +18,9 @@ def register(request):
             )
             login(request, user)
             return redirect('portal:profile')
+        # else:
+        #     messages.error(request, "Registration failed. Please correct the errors below.")
+        #     print(form.errors)
     else:
         form = UserRegisterForm()
     return render(request, 'portal/register.html', {'form': form})
@@ -29,7 +32,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect('portal:dashboard')
+            return redirect("portal:job_list")
         else:
             messages.error(request, "Invalid credentials")
             return redirect("portal:login")
@@ -81,7 +84,7 @@ def post_job(request):
         form = JobForm()
     return render(request, 'portal/post_job.html', {'form': form,  'title': 'Post', 'submit': 'Post'})
 
-@login_required
+
 def job_list(request):
     jobs = Job.objects.all()
     query = request.GET.get('query', '')
@@ -108,6 +111,7 @@ def job_list(request):
         'category': category
     })
 
+@login_required
 def job_details(request, job_id):
     job = get_object_or_404(Job, id=job_id)
     applied = False
@@ -188,6 +192,7 @@ def delete_job(request, job_id):
         return redirect('portal:dashboard')
     return render(request, 'portal/delete_job.html', {'job': job})
 
+@login_required
 def logout_view(request):
     logout(request)
     return redirect('portal:login')
