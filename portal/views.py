@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Count
 from .forms import UserRegisterForm, UserProfileForm, JobForm, ApplicationForm
 from .models import UserProfile, Job, Application
 
@@ -32,7 +32,7 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
-            return redirect("portal:job_list")
+            return redirect("portal:dashboard")
         else:
             messages.error(request, "Invalid credentials")
             return redirect("portal:login")
@@ -50,11 +50,12 @@ def profile(request):
         form = UserProfileForm(instance=profile)
     return render(request, 'portal/profile.html', {'form': form})
 
+
 @login_required
 def dashboard(request):
     profile, created = UserProfile.objects.get_or_create(user=request.user)
     if profile.user_type == 'recruiter':
-        jobs = Job.objects.filter(recruiter=request.user)
+        jobs = Job.objects.filter(recruiter=request.user).annotate(applied_count=Count("applications"))
         return render(request, 'portal/recruiter_dashboard.html', {'jobs': jobs})
     else:
         applications = Application.objects.filter(jobseeker=request.user)
@@ -70,6 +71,7 @@ def dashboard(request):
             'applications': applications,
             'matched_jobs': matched_jobs
         })
+
 
 @login_required
 def post_job(request):
@@ -97,7 +99,7 @@ def job_list(request):
             Q(skills_required__icontains=query)
         )
 
-    if category:
+    if category and category != "all":
         jobs = jobs.filter(category=category)
 
     applied_jobs = []

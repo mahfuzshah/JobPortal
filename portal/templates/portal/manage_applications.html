@@ -17,6 +17,7 @@
                             <p class="card-text"><strong>Skills:</strong> {{ application.skills }}</p>
                             <p class="card-text"><strong>Cover Letter:</strong> {{ application.cover_letter|truncatechars:100 }}</p>
                             <p class="card-text"><strong>Status:</strong> <span class="badge bg-{% if application.status == 'pending' %}warning{% elif application.status == 'shortlisted' %}info{% elif application.status == 'selected' %}success{% else %}danger{% endif %}">{{ application.status|title }}</span></p>
+                            {% comment %} <p class="card-text"><strong>Applied:</strong> {{ applications|length }}</p> {% endcomment %}
                             <p class="card-text"><small class="text-muted">Applied on: {{ application.applied_at|date:"M d, Y" }}</small></p>
                             {% if application.resume %}
                                 <a href="{{ application.resume.url }}" class="btn btn-sm btn-outline-primary" target="_blank">View Resume</a>

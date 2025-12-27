@@ -1,0 +1,3 @@
+- [ ] Update views.py to annotate jobs with application count for recruiters
+- [ ] Update recruiter_dashboard.html to display the application count on line 23
+- [ ] Test the recruiter dashboard page to verify the display

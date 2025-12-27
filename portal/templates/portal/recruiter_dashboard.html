@@ -20,6 +20,7 @@
                         <div class="card-body">
                             <h5 class="card-title"><a href="{% url 'portal:job_details' job.id %}" class="text-decoration-none">{{ job.title }}</a></h5>
                             <p class="card-text"><strong>Skills:</strong> {{ job.skills_required }}</p>
+                            <p class="card-text"><strong>Applied: {{ job.applied_count }} </strong></p>
                             <small class="text-muted">Posted on: {{ job.created_at|date:"M d, Y" }}</small>
                             <div class="mt-3">
                                 <a href="{% url 'portal:manage_applications' job.id %}" class="btn btn-sm btn-info">View Applications</a>
